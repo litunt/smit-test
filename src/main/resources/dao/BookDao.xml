@@ -1,0 +1,182 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.smit.library.dao.BookDao">
+
+    <resultMap id="bookMapper" type="com.smit.library.model.Book">
+        <result property="bookId" column="book_id"/>
+        <result property="isbn" column="isbn"/>
+        <result property="numOfSamples" column="samples"/>
+        <result property="publicationDate" column="publication_date"/>
+        <result property="authorName" column="author_name"/>
+        <result property="authorSurname" column="author_surname"/>
+        <result property="heading" column="heading"/>
+        <result property="section" column="section"/>
+        <result property="sectionName" column="section_name"/>
+        <result property="orderNumber" column="order_number"/>
+    </resultMap>
+
+    <select id="getBooks" resultMap="bookMapper">
+        SELECT  book.book_id,
+                book.isbn,
+                book.samples,
+                book.publication_date,
+                book.author_name,
+                book.author_surname,
+                book.heading,
+                section.section_id,
+                section.section_name,
+                book.order_number
+        FROM library.library_book AS book
+        LEFT JOIN library.library_section AS section
+            ON book.section = section.section_id
+    </select>
+
+    <select id="getBookById" resultMap="bookMapper" parameterType="Long">
+        SELECT  book.book_id,
+                book.isbn,
+                book.samples,
+                book.publication_date,
+                book.author_name,
+                book.author_surname,
+                book.heading,
+                section.section_id,
+                section.section_name,
+                book.order_number
+        FROM library.library_book AS book
+        LEFT JOIN library.library_section AS section
+            ON book.section = section.section_id
+        WHERE book.book_id = #{bookId}
+    </select>
+
+    <select id="getBooksByHeading" resultMap="bookMapper" parameterType="String">
+        SELECT  book.book_id,
+                book.isbn,
+                book.samples,
+                book.publication_date,
+                book.author_name,
+                book.author_surname,
+                book.heading,
+                section.section_id,
+                section.section_name,
+                book.order_number
+        FROM library.library_book AS book
+        LEFT JOIN library.library_section AS section
+            ON book.section = section.section_id
+        WHERE book.heading LIKE '%' + #{heading} + '%'
+        ORDER BY book.author_surname ASC
+    </select>
+
+    <select id="getBooksByAuthorName" resultMap="bookMapper" parameterType="String">
+        SELECT  book.book_id,
+                book.isbn,
+                book.samples,
+                book.publication_date,
+                book.author_name,
+                book.author_surname,
+                book.heading,
+                section.section_id,
+                section.section_name,
+                book.order_number
+        FROM library.library_book AS book
+        LEFT JOIN library.library_section AS section
+            ON book.section = section.section_id
+        WHERE book.author_name =  #{authorName}
+        ORDER BY book.author_surname ASC
+    </select>
+
+    <select id="getBooksByAuthorSurname" resultMap="bookMapper" parameterType="String">
+        SELECT  book.book_id,
+                book.isbn,
+                book.samples,
+                book.publication_date,
+                book.author_name,
+                book.author_surname,
+                book.heading,
+                section.section_id,
+                section.section_name,
+                book.order_number
+        FROM library.library_book AS book
+        LEFT JOIN library.library_section AS section
+            ON book.section = section.section_id
+        WHERE book.author_surname = #{authorSurname}
+        ORDER BY book.author_surname ASC
+    </select>
+
+    <select id="getBooksByAuthorNameAndSurname" resultMap="bookMapper" parameterType="String">
+        SELECT  book.book_id,
+                book.isbn,
+                book.samples,
+                book.publication_date,
+                book.author_name,
+                book.author_surname,
+                book.heading,
+                section.section_id,
+                section.section_name,
+                book.order_number
+        FROM library.library_book AS book
+        LEFT JOIN library.library_section AS section
+            ON book.section = section.section_id
+        WHERE book.author_surname = #{authorSurname}
+              AND book.author_name = #{authorName}
+        ORDER BY book.author_surname ASC
+    </select>
+
+    <select id="getBooksByHeadingAndAuthorNameOrSurname" resultMap="bookMapper" parameterType="String">
+        SELECT  book.book_id,
+                book.isbn,
+                book.samples,
+                book.publication_date,
+                book.author_name,
+                book.author_surname,
+                book.heading,
+                section.section_id,
+                section.section_name,
+                book.order_number
+        FROM library.library_book AS book
+        LEFT JOIN library.library_section AS section
+            ON book.section = section.section_id
+        WHERE (book.author_surname = #{authorSurname}
+              OR book.author_name = #{authorName})
+              AND book.heading LIKE '%' + #{heading} + '%'
+        ORDER BY book.author_surname ASC
+    </select>
+
+    <select id="getBooksByHeadingAndAuthorNameAndSurname" resultMap="bookMapper" parameterType="String">
+        SELECT  book.book_id,
+                book.isbn,
+                book.samples,
+                book.publication_date,
+                book.author_name,
+                book.author_surname,
+                book.heading,
+                section.section_id,
+                section.section_name,
+                book.order_number
+        FROM library.library_book AS book
+        LEFT JOIN library.library_section AS section
+            ON book.section = section.section_id
+        WHERE book.author_surname = #{authorSurname}
+              AND book.author_name = #{authorName}
+              AND book.heading LIKE '%' + #{heading} + '%'
+        ORDER BY book.author_surname ASC
+    </select>
+
+    <update id="changeBookSamplesNumber">
+        UPDATE library.library_book
+        SET library.library_book.samples = #{number}
+        WHERE library.library_book.book_id = #{bookId}
+    </update>
+
+    <insert id="insertBook" parameterType="com.smit.library.model.Book">
+        INSERT INTO library.library_book (isbn, samples, publication_date, author_name, author_surname, heading,
+                                            section, order_number)
+        VALUES (#{book.isbn}, #{book.bumOfSamples}, #{book.publicationDate}, #{book.authorName}, #{book.authorSurname},
+                #{book.heading}, #{book.section}, #{book.ordernUmber})
+    </insert>
+
+    <delete id="deleteBook" parameterType="Long">
+        DELETE FROM library.library_book
+        WHERE book_id = #{bookId}
+    </delete>
+</mapper>

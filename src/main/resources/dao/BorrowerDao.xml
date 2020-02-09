@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.smit.library.dao.BorrowerDao">
+
+    <resultMap id="borrowingMapper" type="com.smit.library.model.Borrower">
+        <result property="borrower_id" column="borrowerId"/>
+        <result property="name" column="borrowerName"/>
+        <result property="email" column="borrowerEmail"/>
+    </resultMap>
+
+    <select id="getBorrowerByName" parameterType="String">
+        SELECT borrower.borrower_id,
+               borrower.name,
+               borrower.email
+        FROM library.library_borrower AS borrower
+        WHERE borrower.name LIKE '%' + #{borrowerName} + '%'
+    </select>
+
+    <insert id="insertBorrower" parameterType="com.smit.library.model.Borrower"
+            useGeneratedKeys="true" keyProperty="borrower.borrowerId"
+            keyColumn="borrower_id">
+        INSERT INTO library.library_borrower (name, email)
+        VALUES (#{borrower.name}, #{borrower.email})
+    </insert>
+
+</mapper>

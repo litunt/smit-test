@@ -1,0 +1,49 @@
+mybatis:
+    config.classpath*: com/smit/library/dao/mybatis-config.xml
+    configuration:
+        map-underscore-to-camel-case: true
+        cache-enabled: false
+        local-cache-scope: STATEMENT
+    mapper-locations: classpath:dao/*Dao.xml
+    type-aliases-package: com.smit.library.model
+
+host.base.url: https://localhost:3030
+
+server:
+    port: 3030
+    servlet.session.cookie:
+        name: library-dev
+        path: /
+        httpOnly: true
+        secure: false
+
+spring:
+    application:
+        name: LibraryApp
+    datasource:
+        type: com.zaxxer.hikari.HikariDataSource
+        driver-class-name: org.postgresql.Driver
+        url: jdbc:postgresql://localhost:5432/library_db
+        username: postgres
+        password: admin
+        initialization-mode: always
+        hikari:
+            auto-commit: false
+            maximum-pool-size: 1
+        platform: postgresql
+    resources:
+        chain.cache: false
+        static-locations: file:library-app/dist/,file:library-app/dist/assets/,classpath:/META-INF/resources/,classpath:/resources/,classpath:/static/,classpath:/public/
+    thymeleaf:
+        enabled: true
+        prefix: classpath:/templates/
+        suffix: .html
+        view-names: index
+    liquibase:
+        enabled: true
+        change-log: classpath:db/master.xml
+    security:
+        user:
+            password: password
+            name: user
+
